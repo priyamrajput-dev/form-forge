@@ -53,87 +53,106 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-8">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-6">
+    <div className="mx-auto w-full max-w-5xl pt-4 pb-12 px-2">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-semibold">Dashboard</h1>
-          <p className="text-sm text-white/60 mt-1">Welcome back, {user?.fullName || user?.email}!</p>
+          <p className="text-sm text-white/60">Forms</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
         </div>
-        <button 
-          onClick={handleLogout}
-          className="bg-white/10 text-white hover:bg-white/20 transition-colors px-4 py-2 rounded-md font-medium text-sm"
-        >
-          Logout
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center flex flex-col justify-center">
-          <div className="text-4xl font-bold text-white mb-2">{forms.length}</div>
-          <div className="text-sm text-white/60">Total Forms</div>
-        </div>
-        
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center flex flex-col justify-center">
-          <div className="text-4xl font-bold text-white mb-2">-</div>
-          <div className="text-sm text-white/60">Total Submissions</div>
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 flex flex-col justify-center">
-          {!isCreating ? (
-            <button 
-              onClick={() => setIsCreating(true)}
-              className="bg-white text-black hover:bg-gray-200 transition-colors px-4 py-2 rounded-md font-medium w-full"
-            >
-              + Create New Form
-            </button>
-          ) : (
-            <form onSubmit={handleCreateForm} className="space-y-3">
-              <input 
-                type="text" 
-                placeholder="Form Title" 
-                className="w-full bg-white/10 border border-white/20 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none"
-                value={newFormTitle}
-                onChange={(e) => setNewFormTitle(e.target.value)}
-                autoFocus
-                required
-              />
-              <input 
-                type="text" 
-                placeholder="Description (optional)" 
-                className="w-full bg-white/10 border border-white/20 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none"
-                value={newFormDesc}
-                onChange={(e) => setNewFormDesc(e.target.value)}
-              />
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setIsCreating(false)} className="flex-1 text-white/60 hover:text-white text-sm">Cancel</button>
-                <button type="submit" className="flex-1 bg-white text-black rounded-md text-sm font-medium py-1.5">Create</button>
-              </div>
-            </form>
-          )}
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setIsCreating(true)}
+            className="bg-white text-black hover:bg-white/90 transition-colors px-4 py-2 rounded-lg font-medium text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+          >
+            Create Form
+          </button>
         </div>
       </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Your Forms</h2>
+      <div className="space-y-3">
         {forms.length === 0 ? (
-          <p className="text-white/40 text-sm">You haven't created any forms yet.</p>
-        ) : (
-          <div className="space-y-3">
-            {forms.map(form => (
-              <div key={form._id} className="border border-white/10 bg-white/5 p-4 rounded-lg flex items-center justify-between hover:bg-white/10 transition-colors">
-                <div>
-                  <h3 className="font-medium text-lg">{form.title}</h3>
-                  {form.description && <p className="text-sm text-white/60">{form.description}</p>}
-                </div>
-                <div className="flex gap-3">
-                  <Link to={`/forms/${form._id}/responses`} className="text-sm text-white/80 hover:text-white px-3 py-1.5 bg-white/10 rounded-md transition-colors border border-white/10">Responses</Link>
-                  <Link to={`/forms/${form._id}/edit`} className="text-sm bg-white text-black hover:bg-gray-200 px-3 py-1.5 rounded-md transition-colors font-medium">Edit</Link>
-                </div>
-              </div>
-            ))}
+          <div className="border border-white/10 bg-white/5 p-6 rounded-lg text-sm text-white/40">
+            You haven't created any forms yet.
           </div>
+        ) : (
+          forms.map(form => (
+            <div key={form._id} className="border border-white/10 bg-[#111] p-5 rounded-lg flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-lg text-white">{form.title}</h3>
+                {form.description && <p className="text-sm text-white/60 mt-1">{form.description}</p>}
+                <span className="block text-xs text-white/30 mt-2">
+                  {new Date(form.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link 
+                  to={`/forms/${form._id}/responses`} 
+                  className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                  aria-label="View responses"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </Link>
+                <Link 
+                  to={`/forms/${form._id}/edit`} 
+                  className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                  aria-label="Edit form"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                </Link>
+              </div>
+            </div>
+          ))
         )}
       </div>
+
+      {isCreating && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0f0f0f] shadow-2xl overflow-hidden relative">
+            <button 
+              onClick={() => setIsCreating(false)} 
+              className="absolute top-4 right-4 text-white/60 hover:text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <div className="p-6 pb-4">
+              <h2 className="text-xl font-semibold text-white">Create Form</h2>
+              <p className="text-sm text-white/60 mt-1">Add a title and optional description.</p>
+            </div>
+            <form onSubmit={handleCreateForm} className="px-6 pb-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white/80">Title</label>
+                <input 
+                  type="text" 
+                  placeholder="Form title" 
+                  className="w-full bg-[#1c1c1c] border border-white/10 rounded-md px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/30 placeholder:text-white/30"
+                  value={newFormTitle}
+                  onChange={(e) => setNewFormTitle(e.target.value)}
+                  autoFocus
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white/80">Description</label>
+                <textarea 
+                  placeholder="Optional description" 
+                  className="w-full bg-[#1c1c1c] border border-white/10 rounded-md px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/30 placeholder:text-white/30 min-h-[100px] resize-none"
+                  value={newFormDesc}
+                  onChange={(e) => setNewFormDesc(e.target.value)}
+                />
+              </div>
+              <div className="pt-2 flex justify-end">
+                <button 
+                  type="submit" 
+                  disabled={!newFormTitle.trim()}
+                  className="bg-white/90 text-black hover:bg-white rounded-md text-sm font-medium py-2 px-6 disabled:opacity-50 transition-colors"
+                >
+                  Create
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
